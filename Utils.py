@@ -1,9 +1,11 @@
 import os.path
 import string
 import argparse
+import re
 
 empty_lines = []
-
+def_regex = '^def'
+class_regex = "^class"
 
 def return_argument():
     parser = argparse.ArgumentParser()
@@ -70,6 +72,37 @@ def check_empty_line(line, line_counter):
         return True
 
 
+def check_construction_name(line):
+    strip_line = line.strip()
+    if re.match(def_regex, strip_line):
+        def_template = r'^def\s{1}(?!\s)'
+        if re.match(def_template, strip_line) is None:
+            return True
+    elif re.match(class_regex, strip_line):
+        class_template = r'^class\s{1}(?!\s)'
+        if re.match(class_template, strip_line) is None:
+            return True
+    return False
+
+
+def check_class_name(line):
+    strip_line = line.strip()
+    if re.match(class_regex, strip_line):
+        camel_case_template = r'^class\s{1,}[A-Z]{1}[a-z]{1,}[A-Z]*[a-z]*'
+        if re.match(camel_case_template, strip_line) is None:
+            return True
+    return False
+
+
+def check_function_name(line):
+    strip_line = line.strip()
+    if re.match(def_regex, strip_line):
+        capital_letters = r'def\s{1}[a-z0-9_]*[A-Z]{1,}[a-z0-9_]*'
+        if re.match(capital_letters, strip_line) is not None:
+            return True
+    return False
+
+
 def check_string(line, path_name, errors, line_counter, error_codes):
     if check_len(line):
         add_error(errors, path_name, line_counter, 'S001', error_codes['S001'])
@@ -83,6 +116,12 @@ def check_string(line, path_name, errors, line_counter, error_codes):
         add_error(errors, path_name, line_counter, 'S005', error_codes['S005'])
     if check_empty_line(line, line_counter):
         add_error(errors, path_name, line_counter, 'S006', error_codes['S006'])
+    if check_construction_name(line):
+        add_error(errors, path_name, line_counter, 'S007', error_codes['S007'])
+    if check_class_name(line):
+        add_error(errors, path_name, line_counter, 'S008', error_codes['S008'])
+    if check_function_name(line):
+        add_error(errors, path_name, line_counter, 'S009', error_codes['S009'])
 
 
 def check_file(path, line_counter, errors, error_codes):

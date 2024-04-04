@@ -7,7 +7,10 @@ errors = []
 line_counter = 0
 error_codes = {'S001': 'Too long', 'S002': 'Indentation is not a multiple of four', 'S003': 'Unnecessary semicolon',
                'S004': 'At least two spaces required before inline comments', 'S005': 'TODO found',
-               'S006': 'More than two blank lines used before this line'}
+               'S006': 'More than two blank lines used before this line',
+               "S007": "Too many spaces after construction_name (def or class)",
+               "S008": "Class name class_name should be written in CamelCase",
+               "S009": "Function name function_name should be written in snake_case."}
 error_code = None
 
 isDir = os.path.isdir(path)
